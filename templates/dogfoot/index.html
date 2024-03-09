@@ -1,0 +1,19 @@
+{% extends "dogfoot/dogfoot_base.html" %}
+{% block title %}Dog Foot Management Center{% endblock %}
+
+{% block content %}
+
+<div class="h2 p-4">
+    Current app: {{ app_name }}
+</div>
+<div class="p-4">
+    <a class="btn btn-success" href="/dogfoot/table/all">All</a>
+    {% for app_name in app_names %}
+
+    <a class="btn btn-success" href="/dogfoot/table/{{app_name}}"> {{ app_name }}</a>
+
+    {% endfor %}
+
+</div>
+
+{% endblock content %}

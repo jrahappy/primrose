@@ -1,0 +1,106 @@
+{% extends "docs/_base.html" %}
+
+{% load markdown_filter %}
+
+{% block content %}
+<main class="d-flex flex-column p-2 mb-3">
+    <div class="d-flex justify-content-between">
+        <div class="p-2">
+            <h4 class="h2">Article list</h4>
+        </div>
+        <hr>
+        <div class="p-2">
+            <a class="btn btn-primary" href="{% url 'docs:article-create' %}">Create new article</a>
+
+        </div>
+    </div>
+    <hr>
+    <div class="p-2 ">
+        <div class="row g-5">
+            <div class="col-md-8">
+
+                {% for article in page_obj %}
+                <article class="py-4 mb-3" style="margin-bottom:24px;">
+                    <div class="d-flex flex-row justify-content-between mb-2">
+
+                        <div class="h4">{{ article.subject }}</div>
+
+                        <div>
+                            <div class="d-flex d-flex-row">
+
+                                <div class="d-flex d-flex-row" style="margin-right:4px;">
+                                    <input id="url-{{ article.id }}" class="form-control form-control-sm" readonly
+                                        style="height:14px;" value="{{ request.build_absolute_uri}}{{ article.id }}">
+                                    <button class="btn btn-secondary btn-sm" onclick="myFunction({{article.id}})"
+                                        id="copybtn-{{ article.id }}">Copy</button>
+                                </div>
+                                <div>
+                                    <a class="btn btn-secondary btn-sm"
+                                        href="{% url 'docs:article-detail' article.id %}">Edit</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div>
+                        <p>{{ article.sub_text }}</p>
+
+                    </div>
+                    <div>
+                        <p>{{ article.description|convert_markdown|safe }}</p>
+                    </div>
+                </article>
+                <hr>
+
+                {% empty %}
+                <p>No articles yet.</p>
+                {% endfor %}
+
+
+
+                {% if page_obj.paginator.num_pages > 1 %}
+
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    function myFunction(id) {
+        // Get the text field
+        var copyText = document.getElementById("url-" + id);
+
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value)
+            .then(function () {
+                // Alert the copied text
+                // alert("Copied the text: " + copyText.value);
+                document.getElementById("copybtn-" + id).innerHTML = "Copied";
+            })
+            .catch(function (error) {
+                console.error('Could not copy text: ', error);
+            });
+    }
+</script>
+{% endblock %}

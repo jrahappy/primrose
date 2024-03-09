@@ -6,4 +6,6 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("accounts/", include("accounts.urls")),
     path("", include("pages.urls")),
+    path("docs/", include("docs.urls")),
+    path("dogfoot/", include("dogfoot.urls")),
 ]

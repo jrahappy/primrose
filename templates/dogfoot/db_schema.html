@@ -1,0 +1,27 @@
+{% extends "dogfoot/dogfoot_base.html" %}
+
+{% load dogfoot_filters %}
+
+{% block title %}Intraoral Cases{% endblock %}
+
+{% block content %}
+
+{% for table, columns in table_columns.items %}
+<h2>{{ table }}</h2>
+<h3>Columns</h3>
+<ul>
+    {% for column in columns %}
+    <li>{{ column.name }} ({{ column.type_code }})</li>
+    {% endfor %}
+</ul>
+<h3>Foreign Keys</h3>
+<ul>
+    {% for fk_name, fk_details in table_foreign_keys.table.items %}
+    <li>{{ fk_name }} -> {{ fk_details.foreign_key }}</li>
+    {% endfor %}
+</ul>
+{% endfor %}
+{% endblock %}
+
+"table_columns": table_columns,
+"table_foreign_keys": table_foreign_keys,

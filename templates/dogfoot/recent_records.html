@@ -1,0 +1,114 @@
+{% extends "dogfoot/dogfoot_base.html" %}
+{% block title %}Intraoral Cases{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="h2 p-4">
+    Current app: {{ app_name }}
+</div>
+<div class="p-4">
+    <a class="btn btn-success" href="/dogfoot/table/all">All</a>
+    {% for app_name in app_names %}
+
+    <a class="btn btn-success" href="/dogfoot/table/{{app_name}}"> {{ app_name }}</a>
+
+    {% endfor %}
+
+</div>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-2 p-4">
+    {% for table, columns in table_columns.items %}
+    <div class="col">
+        <div class="card" style="width:18rem;">
+            <div class="card-header bg-dark h6 text-light ">
+                {{ table }}
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                <ul class="list-group list-group-flush">
+                    {% for column in columns %}
+                    <li class="d-flex justify-content-between">
+                        <span style="font-size:14px;font-weight: bold;margin-left:1rem;">{{ column.name }}</span>
+                        <span style="font-size:14px;margin-right:1rem">{{ column.type_code }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                </p>
+                <hr>
+                <a href="/dogfoot/table/{{app_name}}/{{table}}/generate" class="btn btn-success btn-sm">Generate</a>
+                <a href="/dogfoot/table/{{app_name}}/{{table}}/get_recent_records" class="btn btn-success btn-sm">
+                    Get records
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="d-flex flex-column flex-wrap p-2">
+    <div class="card" style="margin-left:1rem; margin-bottom:1rem;max-width: 1280px;">
+        <div class="card-header bg-dark h5 text-light">
+            Recent Database Records(json)
+        </div>
+        <pre><code class="language-python">{{ recent_records|safe }}</code></pre>
+    </div>
+    <button id="btn btn-sm" onclick="convert({{recent_records}} )" style="width:200px;"> Click Here </button> <br>
+    <h3> Resulting Table: </h3>
+    <div class="card" style="margin-left:1rem; margin-bottom:1rem;max-width: 1280px;" id="data-container">
+    </div>
+    <script>
+
+
+        // Function to convert JSON data to HTML table
+        function convert(jsonData) {
+
+            // Get the container element where the table will be inserted
+            let container = document.getElementById("data-container");
+
+            // Create the table element
+            let table = document.createElement("table");
+            table.classList.add("table");
+
+            // Get the keys (column names) of the first object in the JSON data
+            let cols = Object.keys(jsonData[0]);
+
+            // Create the header element
+            let thead = document.createElement("thead");
+            let tr = document.createElement("tr");
+            tr.classList.add("bg-dark", "text-light");
+
+            // Loop through the column names and create header cells
+            cols.forEach((item) => {
+                let th = document.createElement("th");
+                th.innerText = item; // Set the column name as the text of the header cell
+                tr.appendChild(th); // Append the header cell to the header row
+            });
+            thead.appendChild(tr); // Append the header row to the header
+            table.append(tr) // Append the header to the table
+
+            // Loop through the JSON data and create table rows
+            jsonData.forEach((item) => {
+                let tr = document.createElement("tr");
+
+                // Get the values of the current object in the JSON data
+                let vals = Object.values(item);
+
+                // Loop through the values and create table cells
+                vals.forEach((elem) => {
+                    let td = document.createElement("td");
+                    td.innerText = elem; // Set the value as the text of the table cell
+                    tr.appendChild(td); // Append the table cell to the table row
+                });
+                table.appendChild(tr); // Append the table row to the table
+            });
+            container.appendChild(table) // Append the table to the container element
+
+        }
+    </script>
+
+
+</div>
+
+
+{% endblock content %}
